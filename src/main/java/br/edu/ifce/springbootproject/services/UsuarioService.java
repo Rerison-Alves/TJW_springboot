@@ -7,14 +7,12 @@ import br.edu.ifce.springbootproject.repository.DisciplinaRepository;
 import br.edu.ifce.springbootproject.repository.UsuarioRepository;
 import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 @Service
 public class UsuarioService {
@@ -25,8 +23,32 @@ public class UsuarioService {
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    public Usuario getUsuarioByNome(String nome) {
-        return repository.findUsuarioByNome(nome).orElseThrow(() -> new NoResultException("Usuário não encontrado"));
+    public Usuario salvar(Usuario usuario) {
+        return repository.saveAndFlush(usuario);
+    }
+
+    public Usuario getUsuarioById(Integer id) {
+        return repository.findById(id).orElseThrow(() -> new NoResultException("Usuário não encontrado"));
+    }
+
+    public Usuario getUsuarioByEmail(String email) {
+        return repository.findUsuarioByEmail(email).orElseThrow(() -> new NoResultException("Usuário não encontrado"));
+    }
+
+    public Usuario editar(Integer id, Usuario usuarioEditado) {
+        if(!usuarioEditado.getId().equals(id)) {
+            throw new IllegalArgumentException("Usuário não coincide");
+        }
+        Usuario usuario = repository.findById(id).orElseThrow(() -> new NoResultException("Usuário não encontrado"));
+        usuario.setNome(usuarioEditado.getNome());
+        usuario.setEmail(usuarioEditado.getEmail());
+        usuario.setCpf(usuarioEditado.getCpf());
+        usuario.setDataNasc(usuarioEditado.getDataNasc());
+        usuario.setEndereco(usuarioEditado.getEndereco());
+        usuario.setTelefones(usuarioEditado.getTelefones());
+        usuario.setDisciplinas(usuarioEditado.getDisciplinas());
+
+        return repository.save(usuario);
     }
 
     public List<Usuario> getAllUsuarios() {

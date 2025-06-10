@@ -28,8 +28,27 @@ public class UsuarioController {
     }
 
     @ResponseStatus(value = HttpStatus.OK)
+    @PostMapping
+    public ResponseEntity<Usuario> criarUsuario(@RequestBody Usuario usuario) {
+        return ResponseEntity.ok().body(service.salvar(usuario));
+    }
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuario> getUsuarioById(@PathVariable("id") Integer id) {
+        return ResponseEntity.ok().body(service.getUsuarioById(id));
+    }
+
+    @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/get-by-nome/{nome}")
     public ResponseEntity<Usuario> getUsuarioByNome(@PathVariable("nome") String nome) {
-        return ResponseEntity.ok().body(service.getUsuarioByNome(nome));
+        return ResponseEntity.ok().body(service.getUsuarioByEmail(nome));
+    }
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuario> editarUsuario(@PathVariable("id") Integer id,
+                                                 @RequestBody Usuario usuario) {
+        return ResponseEntity.ok().body(service.editar(id, usuario));
     }
 }

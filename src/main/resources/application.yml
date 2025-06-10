@@ -5,8 +5,10 @@ spring:
     hibernate:
       ddl-auto: create-drop
 #      ddl-auto: update
+  sql:
+    init:
+      platform: postgres
   datasource:
-    platform: postgres
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
 #    password: ifce

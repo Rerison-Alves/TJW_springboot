@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/mystyle.css">
+    <title>Cadastro ou Login de Usuário</title>
+</head>
+<body>
+
+<h2>Cadastro ou Login</h2>
+
+<button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Sign Up</button>
+
+<button onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Login</button>
+
+<div id="id01" class="modal">
+    <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+    <form class="modal-content animate" th:action="@{cadastro}" th:object="${usuario}" method="post">
+        <div class="container">
+            <h1>Cadastro</h1>
+            <p>Por favor preencha os campos abaixo para criar uma conta.</p>
+            <hr>
+            <label><b>Nome</b></label>
+            <input type="text" placeholder="Insira nome" th:field="*{nome}" required>
+
+            <label><b>Email</b></label>
+            <input type="text" placeholder="Insira e-mail" th:field="*{email}" required>
+
+            <label><b>CPF</b></label>
+            <input type="text" placeholder="Insira cpf" th:field="*{cpf}" required>
+
+            <label><b>Data de Nascimento</b></label>
+            <input type="date" placeholder="Insira data de nascimento" th:field="*{dataNascimento}" required>
+
+            <label><b>Raça</b></label>
+            <select id="racas" th:field="*{raca}" required>
+                <option value="" selected hidden>N/a</option>
+                <option value="BRANCA">Branca</option>
+                <option value="PRETA">Preta</option>
+                <option value="PARDA">Parda</option>
+                <option value="AMARELA">Amarela</option>
+                <option value="INDIGENA">Indígena</option>
+                <option value="OUTRA">Outra</option>
+            </select>
+
+            <label><b>Senha</b></label>
+            <input type="password" placeholder="Insira Senha" th:field="*{password}" required>
+
+            <label><b>Repetir senha</b></label>
+            <input type="password" placeholder="Insira Senha" th:field="*{confirmPassword}" required>
+
+            <div class="clearfix">
+                <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+                <button type="submit" class="signupbtn">Sign Up</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="id02" class="modal">
+    <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+    <form class="modal-content animate" th:action="@{login}" th:object="${usuario}" method="post">
+        <div class="container">
+            <div class="imgcontainer">
+                <img src="/images/img_avatar2.png" alt="Avatar" class="avatar">
+            </div>
+            <div class="container">
+                <label><b>Email</b></label>
+                <input type="text" placeholder="Insira email" th:field="*{email}" required>
+
+                <label><b>Password</b></label>
+                <input type="password" placeholder="Insira senha" th:field="*{password}" required>
+            </div>
+
+            <div class="clearfix">
+                <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn">Cancel</button>
+                <button type="submit" class="signupbtn">Login</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Get the modal
+    const modal1 = document.getElementById('id01');
+    const modal2 = document.getElementById('id02');
+
+    window.onclick = function(event) {
+      if (event.target === modal1) {
+        modal1.style.display = "none";
+      }
+      if (event.target === modal2) {
+        modal2.style.display = "none";
+      }
+    }
+</script>
+
+</body>
+</html>

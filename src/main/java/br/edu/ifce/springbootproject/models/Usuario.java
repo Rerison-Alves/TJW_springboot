@@ -3,6 +3,7 @@ package br.edu.ifce.springbootproject.models;
 import br.edu.ifce.springbootproject.models.enums.Raca;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -18,6 +19,9 @@ public class Usuario {
 
     @Column(unique = true, nullable = false)
     private String nome;
+
+    @JsonIgnore
+    private String password;
 
     @Column(unique = true, nullable = false, length = 11)
     private String cpf;
@@ -73,6 +77,14 @@ public class Usuario {
         this.nome = nome;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getCpf() {
         return cpf;
     }
@@ -95,6 +107,14 @@ public class Usuario {
 
     public void setDataNasc(Date dataNasc) {
         this.dataNasc = dataNasc;
+    }
+
+    public Raca getRaca() {
+        return raca;
+    }
+
+    public void setRaca(Raca raca) {
+        this.raca = raca;
     }
 
     public Endereco getEndereco() {
