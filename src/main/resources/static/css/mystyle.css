@@ -40,7 +40,7 @@ body {
 }
 
 input[type=text], input[type=password],
-input[type=date], select {
+input[type=date], input[type=email], select {
     width: 100%;
     padding: 12px 20px;
     border-radius: 999px;
@@ -56,15 +56,8 @@ input[type=date]:focus, select:focus {
     outline: none;
 }
 
-/* Set a style for all buttons */
-button {
-    background-color: #04AA6D;
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
-    border: none;
-    cursor: pointer;
-    width: 100%;
+label {
+    font-size: 12px;
 }
 
 button:hover {
@@ -127,8 +120,14 @@ img.avatar {
 
 /* Float cancel and signup buttons and add an equal width */
 .cancelbtn, .signupbtn {
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
     float: left;
-    width: 50%;
 }
 
 /* Add padding to container elements */
@@ -165,6 +164,19 @@ span.psw {
     width: 60%; /* Could be more or less, depending on screen size */
 }
 
+.dropdown-menu button {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.dropdown-menu button:hover {
+    background-color: #f2f2f2;
+}
+
 /* Style the horizontal ruler */
 hr {
     border: 1px solid #f1f1f1;
@@ -198,6 +210,74 @@ hr {
     -webkit-animation: animatezoom 0.6s;
     animation: animatezoom 0.6s
 }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabela-scroll {
+    max-height: 400px; /* Altura máxima da tabela */
+    overflow-y: auto;  /* Scroll vertical */
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+th {
+    background-color: #f2f2f2;
+}
+.btn-filtrar {
+    padding: 8px 16px;
+    max-width: 250px;
+    background-color: #007bff;
+    border-radius: 999px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    height: 36px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 100px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: black;
+}
+
+.dropdown-content a .icon {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
 
 /* Change styles for cancel button and signup button on extra small screens */
 @-webkit-keyframes animatezoom {

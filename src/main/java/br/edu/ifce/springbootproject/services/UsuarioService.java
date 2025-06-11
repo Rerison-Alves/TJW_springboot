@@ -21,7 +21,8 @@ public class UsuarioService {
     @Autowired
     private DisciplinaRepository disciplinaRepository;
 
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    //SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     public Usuario salvar(Usuario usuario) {
         return repository.saveAndFlush(usuario);
