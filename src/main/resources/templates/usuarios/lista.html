@@ -8,6 +8,13 @@
 <body>
 <div class="top-bar">
     <h2>Sistema TJW</h2>
+    <form th:action="@{/usuarios/logout}" method="get"
+          style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); margin: 0;">
+        <button type="submit" style="padding: 8px 16px; display: flex; align-items: center; gap: 6px; color: white; background-color: #0b0c0c; border: none; cursor: pointer;">
+            <img src="/images/login.svg" style="filter: brightness(0) invert(1); width: 20px; height: 20px" alt="Logout" class="icon">
+            Sair
+        </button>
+    </form>
 </div>
 <div class="container" style="text-align:center; width: auto">
     <h1>Usuários</h1>
@@ -81,44 +88,111 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="usuario : ${usuarios}">
+        <tr th:each="usuario, iterStat : ${usuarios}">
             <td th:text="${usuario.nome}">Nome</td>
             <td th:text="${usuario.email}">Email</td>
             <td th:text="${usuario.cpf}">CPF</td>
             <td th:text="${usuario.raca}">Raça</td>
             <td th:text="${#dates.format(usuario.dataNasc, 'dd/MM/yyyy')}">Data</td>
             <td>
-                <!-- Botão que abre dropdown -->
                 <div class="dropdown">
-                    <button onclick="toggleDropdown('dropdown-[[${usuario.id}]]')" class="dropbtn">▼</button>
-                    <div id="dropdown-[[${usuario.id}]]" class="dropdown-content">
-                        <a href="#" onclick="openModal('modal-edit-[[${usuario.id}]]'); closeDropdown('dropdown-[[${usuario.id}]]'); return false;">
+                    <button th:onclick="'toggleDropdown(\'dropdown-' + ${usuario.id} + '\')'" class="dropbtn">▼</button>
+
+                    <div th:id="'dropdown-' + ${usuario.id}" class="dropdown-content">
+<!--                        Abrir Modal Editar-->
+                        <a href="#"
+                           th:onclick="'abrirEditarModal(this); closeDropdown(\'dropdown-' + ${usuario.id} + '\'); return false;'"
+                           th:data-id="${usuario.id}"
+                           th:data-nome="${usuario.nome}"
+                           th:data-email="${usuario.email}"
+                           th:data-cpf="${usuario.cpf}"
+                           th:data-raca="${usuario.raca}"
+                           th:data-data-nasc="${#dates.format(usuario.dataNasc, 'yyyy-MM-dd')}">
                             <img src="/images/edit.svg" alt="Editar" class="icon"> Editar
                         </a>
-                        <a href="#" onclick="openModal('modal-delete-[[${usuario.id}]]'); closeDropdown('dropdown-[[${usuario.id}]]'); return false;">
+<!--                        Abrir Modal Excluir-->
+                        <a href="#"
+                           th:onclick="'openModal(\'modal-del-' + ${usuario.id} + '\'); closeDropdown(\'dropdown-' + ${usuario.id} + '\'); return false;'">
                             <img src="/images/delete.svg" alt="Excluir" class="icon"> Excluir
                         </a>
                     </div>
                 </div>
 
-                <!-- Modal Editar -->
-                <div id="modal-edit-[[${usuario.id}]]" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('modal-edit-[[${usuario.id}]]')">&times;</span>
-                        <h2>Editar Usuário [[${usuario.nome}]]</h2>
-                        <!-- Formulário de edição aqui -->
-                    </div>
+<!--                Modal Editar-->
+                <div th:id="'modal-edit-' + ${usuario.id}" style="text-align:start;" class="modal">
+                    <span th:onclick="'closeModal(\'modal-edit-' + ${usuario.id} + '\')'"
+                          class="close" title="Fechar Modal">&times;</span>
+
+                    <form class="modal-content animate"
+                          th:action="@{'/usuarios/' + ${usuario.id} + '/editar'}"
+                          th:object="${usuarioVO}"
+                          method="post">
+
+                        <div class="container">
+                            <h1 th:text="'Editar: ' + ${usuario.nome}">Editar</h1>
+                            <p>Atualize as informações abaixo:</p>
+                            <hr>
+
+                            <label><b>Nome</b></label>
+                            <input type="text" placeholder="Insira nome" th:field="*{nome}" required>
+
+                            <label><b>Email</b></label>
+                            <input type="text" placeholder="Insira e-mail" th:field="*{email}" required>
+
+                            <label><b>CPF</b></label>
+                            <input type="text" placeholder="Insira cpf" th:field="*{cpf}" required>
+
+                            <label><b>Data de Nascimento</b></label>
+                            <input type="date" placeholder="Insira data de nascimento"
+                                   th:field="*{dataNascimento}"
+                                   th:value="${#dates.format(usuario.dataNasc, 'yyyy-MM-dd')}" required>
+
+                            <label><b>Raça</b></label>
+                            <select th:field="*{raca}" required>
+                                <option value="" hidden>Selecione</option>
+                                <option value="BRANCA">Branca</option>
+                                <option value="PRETA">Preta</option>
+                                <option value="PARDA">Parda</option>
+                                <option value="AMARELA">Amarela</option>
+                                <option value="INDIGENA">Indígena</option>
+                                <option value="OUTRA">Outra</option>
+                            </select>
+
+                            <div class="clearfix">
+                                <button type="button"
+                                        th:onclick="'closeModal(\'modal-edit-' + ${usuario.id} + '\')'"
+                                        class="cancelbtn">Cancelar</button>
+                                <button type="submit" class="signupbtn">Salvar</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
-                <!-- Modal Excluir -->
-                <div id="modal-delete-[[${usuario.id}]]" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal('modal-delete-[[${usuario.id}]]')">&times;</span>
-                        <h2>Excluir Usuário [[${usuario.nome}]]</h2>
-                        <p>Tem certeza que deseja excluir?</p>
-                        <button>Confirmar</button>
-                        <button onclick="closeModal('modal-delete-[[${usuario.id}]]')">Cancelar</button>
-                    </div>
+<!--                Modal Excluir-->
+                <div th:id="'modal-del-'+${usuario.id}" class="modal" style="display:none; text-align:start;">
+                    <span class="close"
+                          th:onclick="'closeModal(\'modal-del-'+${usuario.id}+'\')'"
+                          title="Fechar">&times;</span>
+                    <form th:action="@{'/usuarios/' + ${usuario.id} + '/excluir'}"
+                          method="post"
+                          class="modal-content animate">
+
+                        <div class="container">
+                            <h2 th:text="'Excluir usuário: ' + ${usuario.nome}">Excluir usuário</h2>
+                            <p>Tem certeza que deseja excluir este usuário?</p>
+                            <hr>
+                            <div class="clearfix" style="display: flex; justify-content: space-between;">
+                                <button type="button"
+                                        class="cancelbtn"
+                                        th:onclick="'closeModal(\'modal-del-'+${usuario.id}+'\')'">
+                                    Cancelar
+                                </button>
+                                <button type="submit" class="signupbtn" style="background-color: red;">
+                                    Excluir
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </td>
         </tr>
@@ -149,12 +223,6 @@
         });
     }
 
-    window.onclick = function(event) {
-        if (!event.target.matches('.dropbtn')) {
-            closeAllDropdowns();
-        }
-    };
-
     function openModal(id) {
         const modal = document.getElementById(id);
         if (modal) modal.style.display = 'block';
@@ -164,5 +232,28 @@
         const modal = document.getElementById(id);
         if (modal) modal.style.display = 'none';
     }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.dropbtn')) {
+            closeAllDropdowns();
+        }
+    };
+
+    function abrirEditarModal(el) {
+        const id = el.dataset.id;
+        const modal = document.getElementById('modal-edit-' + id);
+        if (!modal) return;
+
+        // Preenche os inputs do modal
+        modal.querySelector('input[name="nome"]').value = el.dataset.nome || '';
+        modal.querySelector('input[name="email"]').value = el.dataset.email || '';
+        modal.querySelector('input[name="cpf"]').value = el.dataset.cpf || '';
+        modal.querySelector('input[name="dataNascimento"]').value = el.dataset.dataNasc || '';
+        modal.querySelector('select[name="raca"]').value = el.dataset.raca || '';
+
+        // Abre o modal
+        modal.style.display = 'block';
+    }
+
 </script>
 </html>

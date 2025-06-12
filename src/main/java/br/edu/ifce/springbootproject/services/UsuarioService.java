@@ -37,9 +37,6 @@ public class UsuarioService {
     }
 
     public Usuario editar(Integer id, Usuario usuarioEditado) {
-        if(!usuarioEditado.getId().equals(id)) {
-            throw new IllegalArgumentException("Usuário não coincide");
-        }
         Usuario usuario = repository.findById(id).orElseThrow(() -> new NoResultException("Usuário não encontrado"));
         usuario.setNome(usuarioEditado.getNome());
         usuario.setEmail(usuarioEditado.getEmail());
@@ -50,6 +47,10 @@ public class UsuarioService {
         usuario.setDisciplinas(usuarioEditado.getDisciplinas());
 
         return repository.save(usuario);
+    }
+
+    public void excluir(Integer id) {
+        repository.deleteById(id);
     }
 
     public List<Usuario> getAllUsuarios() {

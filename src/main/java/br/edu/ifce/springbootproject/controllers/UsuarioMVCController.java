@@ -2,28 +2,20 @@ package br.edu.ifce.springbootproject.controllers;
 
 import br.edu.ifce.springbootproject.models.Usuario;
 import br.edu.ifce.springbootproject.models.VO.UsuarioVO;
-import br.edu.ifce.springbootproject.models.enums.Raca;
 import br.edu.ifce.springbootproject.services.UsuarioService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
+
+import static br.edu.ifce.springbootproject.util.HashPass.getStringFromSHA256;
 
 @Controller
 @RequestMapping("usuarios")
 public class UsuarioMVCController {
-
-    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
     UsuarioService usuarioService;
@@ -35,26 +27,64 @@ public class UsuarioMVCController {
     }
 
     @PostMapping("/cadastro")
-    public String cadastro(UsuarioVO usuarioVO) throws ParseException {
-        Usuario usuario = new Usuario();
-        usuario.setNome(usuarioVO.getNome());
-        usuario.setEmail(usuarioVO.getEmail());
-        usuario.setCpf(usuarioVO.getCpf());
-        usuario.setPassword(passwordEncoder.encode(usuarioVO.getPassword()));
-        usuario.setRaca(Raca.valueOf(usuarioVO.getRaca()));
-        usuario.setDataNasc(sdf.parse(usuarioVO.getDataNascimento()));
-        usuarioService.salvar(usuario);
-        return "index";
+    public String cadastro(Model model,
+                           UsuarioVO usuarioVO) {
+        try {
+            usuarioService.salvar(usuarioVO.getUsusario());
+            return "redirect:/usuarios";
+        } catch (Exception e) {
+            model.addAttribute("erro", e.getMessage());
+            return "erro";
+        }
+    }
+
+    @PostMapping("/{id}/editar")
+    public String editarUsuario(@PathVariable Integer id,
+                                Model model,
+                                UsuarioVO usuarioVO) {
+        try {
+            usuarioService.editar(id, usuarioVO.getUsusario());
+            return "redirect:/usuarios";
+        } catch (Exception e) {
+            model.addAttribute("erro", e.getMessage());
+            return "erro";
+        }
+    }
+
+    @PostMapping("/{id}/excluir")
+    public String excluirUsuario(@PathVariable Integer id,
+                                 Model model) {
+        try {
+            usuarioService.excluir(id);
+            return "redirect:/usuarios";
+        } catch (Exception e) {
+            model.addAttribute("erro", e.getMessage());
+            return "erro";
+        }
     }
 
     @PostMapping("/login")
-    public String login(UsuarioVO usuarioVO) {
-        Usuario usuario = usuarioService.getUsuarioByEmail(usuarioVO.getEmail());
-        if (passwordEncoder.encode(usuarioVO.getPassword()).equals(usuario.getPassword())) {
-            return "index";
-        } else {
-            throw new IllegalStateException("Credenciais inválidas. Verifique seu email e senha.");
+    public String login(UsuarioVO usuarioVO,
+                        Model model,
+                        HttpSession session) {
+        try {
+            Usuario usuario = usuarioService.getUsuarioByEmail(usuarioVO.getEmail());
+            if (getStringFromSHA256(usuarioVO.getPassword()).equals(usuario.getPassword())) {
+                session.setAttribute("usuarioLogado", usuario.getEmail());
+                return "redirect:/usuarios";
+            }
+            model.addAttribute("erro", "Email ou senha incorretos");
+        } catch (Exception e) {
+            model.addAttribute("erro", "Email ou senha incorretos");
+            return "erro";
         }
+        return "erro";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/usuarios/auth";
     }
 
     @GetMapping
@@ -64,7 +94,12 @@ public class UsuarioMVCController {
                                  @RequestParam(value = "raca", required = false) String raca,
                                  @RequestParam(value = "dtNascInit", required = false) String dtNascInit,
                                  @RequestParam(value = "dtNascFinal", required = false) String dtNascFinal,
+                                 HttpSession session,
                                  Model model) {
+
+        if (session.getAttribute("usuarioLogado") == null) {
+            return "redirect:/usuarios/auth";
+        }
 
         nome = normalizeParam(nome);
         email = normalizeParam(email);
@@ -73,15 +108,17 @@ public class UsuarioMVCController {
         dtNascInit = normalizeParam(dtNascInit);
         dtNascFinal = normalizeParam(dtNascFinal);
 
-        List<Usuario> usuarios = usuarioService.findAllUsuarios(nome, email, cpf, raca, dtNascInit, dtNascFinal);
-
-        model.addAttribute("usuarios", usuarios);
         model.addAttribute("nome", nome);
         model.addAttribute("email", email);
         model.addAttribute("cpf", cpf);
         model.addAttribute("raca", raca);
         model.addAttribute("dtNascInit", dtNascInit);
         model.addAttribute("dtNascFinal", dtNascFinal);
+
+        List<Usuario> usuarios = usuarioService.findAllUsuarios(nome, email, cpf, raca, dtNascInit, dtNascFinal);
+
+        model.addAttribute("usuarios", usuarios);
+        model.addAttribute("usuarioVO", new UsuarioVO());
 
         return "usuarios/lista";
     }

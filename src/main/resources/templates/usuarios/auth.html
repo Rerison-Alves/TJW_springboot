@@ -25,6 +25,7 @@
         <span class="text">Faça Login com sua conta</span>
     </button>
 
+<!--    Cadastro Modal-->
     <div id="id01" style="text-align:start;" class="modal">
         <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
         <form class="modal-content animate" th:action="@{cadastro}" th:object="${usuario}" method="post">
@@ -69,6 +70,7 @@
         </form>
     </div>
 
+<!--    Login Modal-->
     <div id="id02" style="text-align:start;" class="modal">
         <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
         <form class="modal-content animate" th:action="@{login}" th:object="${usuario}" method="post">

@@ -101,12 +101,6 @@ button:hover {
     transform: translateX(-50%) translateY(-50%);
 }
 
-/* Extra styles for the cancel button */
-.cancelbtn {
-    padding: 14px 20px;
-    background-color: #f44336;
-}
-
 .imgcontainer {
     text-align: center;
     margin: 24px 0 12px 0;
@@ -120,14 +114,19 @@ img.avatar {
 
 /* Float cancel and signup buttons and add an equal width */
 .cancelbtn, .signupbtn {
-    background-color: #04AA6D;
+    background-color: #007bff;
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
     border: none;
     cursor: pointer;
-    width: 100%;
+    width: 50%;
     float: left;
+}
+
+.cancelbtn {
+    padding: 14px 20px;
+    background-color: #808080;
 }
 
 /* Add padding to container elements */
